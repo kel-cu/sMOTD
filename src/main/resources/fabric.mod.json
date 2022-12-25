@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "smotd",
+  "version": "${version}",
+  "name": "Simply MOTD",
+  "description": "Mod MOTD for my local server",
+  "authors": [
+    "Simply_Kel"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "og.kel.motd.Main"
+    ]
+  },
+  "mixins": [
+    "motd.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.11",
+    "fabric": "*",
+    "minecraft": "1.19.3"
+  }
+}
