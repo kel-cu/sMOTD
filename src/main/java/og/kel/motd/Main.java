@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +35,9 @@ public class Main implements ModInitializer {
         String descreption = Utils.fixFormatCodes(config.getLine1());
 
         // Подсчет времени
-        long dayTime = server.getWorld(World.OVERWORLD).getLunarTime() % 24000L;
+        ServerWorld world = server.getWorld(World.OVERWORLD);
+        long dayTime = world != null ? world.getLunarTime() % 24000L : -1;
+
         String time = dayTime < 0 ? "" : dayTime < 6000 ? config.getMorning() : dayTime < 12000 ?
                 config.getDay() : dayTime < 16500 ? config.getEvening() : config.getNight();
 
