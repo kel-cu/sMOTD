@@ -23,9 +23,13 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     // JSON
-    testImplementation 'junit:junit:4.13.1'
-    testImplementation 'com.jayway.jsonpath:json-path:2.1.0'
-    testImplementation 'org.mockito:mockito-core:1.9.5'
+    include(implementation "org.json:json:${project.JSON}")
+
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 }
 
 processResources {

@@ -34,7 +34,7 @@ public class Main implements ModInitializer {
 
     public Config config;
     private void start(MinecraftServer minecraftServer) {
-        log.info("Server loaded");
+        log.info("sMOTD started");
         server = minecraftServer;
         config = new Config();
         setMetaData();
@@ -62,21 +62,29 @@ public class Main implements ModInitializer {
         } else if (dayTime < 24000 && dayTime > 16500) {
             time = INSTANCE.config.getNight();
         }
-        if(time.length() == 0){
-            metadata.setDescription(MutableText.of(new LiteralTextContent(Utils.fixFormatCodes(INSTANCE.config.getLine1()+"\n"+INSTANCE.config.getLine2()))));
-        } else {
+        String descreption = Utils.fixFormatCodes(INSTANCE.config.getLine1());
+        if(time.length() != 0){
             String line1Time = "";
             int countEnable = INSTANCE.config.getLineCount() - Utils.clearFormatCodes(INSTANCE.config.getLine1()).length() - Utils.clearFormatCodes(time).length();
             if(countEnable <= 0){
-                metadata.setDescription(MutableText.of(new LiteralTextContent(Utils.fixFormatCodes(INSTANCE.config.getLine1()+"\n"+INSTANCE.config.getLine2()))));
+                descreption = Utils.fixFormatCodes(INSTANCE.config.getLine1());
             } else {
                 line1Time += INSTANCE.config.getLine1();
                 for (int i = 0; i < countEnable; i++) {
                     line1Time += " ";
                 }
                 line1Time += time;
-                metadata.setDescription(MutableText.of(new LiteralTextContent(Utils.fixFormatCodes(line1Time + "\n" + INSTANCE.config.getLine2()))));
+                descreption = Utils.fixFormatCodes(line1Time);
             }
         }
+        if(INSTANCE.config.getUseRandomLine2()){
+            if(INSTANCE.config.getRandomLine2().length() == 0) descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getLine2());
+            else {
+                double random = Math.floor(Math.random() * INSTANCE.config.getRandomLine2().length());
+                descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getRandomLine2().getString((int)random));
+            }
+        } else descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getLine2());
+        Main.log.info(descreption);
+        metadata.setDescription(MutableText.of(new LiteralTextContent(descreption)));
     }
 }
