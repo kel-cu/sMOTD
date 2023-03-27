@@ -1,90 +1,57 @@
 package og.kel.motd;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
+import lombok.Getter;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerMetadata;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.text.MutableText;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Main implements ModInitializer {
-    public static Main INSTANCE;
-    static MinecraftServer server;
-    public static String MOD_ID = "smotd";
-    public static String prefix = "["+MOD_ID+"] ";
-    public static final Logger log = LogManager.getLogger(MOD_ID);
+    public static final String MOD_ID = "smotd";
+    public static final String prefix = "[" + MOD_ID + "] ";
+    private static Config config;
+    @Getter
+    private static final Logger log = LogManager.getLogger(MOD_ID);
+    @Getter
+    private static MinecraftServer server;
+
     @Override
     public void onInitialize() {
-        INSTANCE = this;
         ServerLifecycleEvents.SERVER_STARTED.register(this::start);
     }
 
-    public Config config;
     private void start(MinecraftServer minecraftServer) {
         log.info("sMOTD started");
         server = minecraftServer;
         config = new Config();
         setMetaData();
     }
-    public static void setMetaData(){
-        String time = "";
-//        ServerMetadata metadata = server.getServerMetadata();
-        long worldTime = server.getWorld(World.OVERWORLD).getLunarTime();
-        long worldDays;
-        long daysPerTick;
-        long dayTime;
-        if(worldTime > 24000){
-            worldDays = (int) (worldTime / 24000);
-            daysPerTick = worldDays * 24000;
-            dayTime = (int) (worldTime - daysPerTick);
-        }else{
-            dayTime = (int) worldTime;
+
+    public static void setMetaData() {
+        // Инициализация описания
+        String descreption = Utils.fixFormatCodes(config.getLine1());
+
+        // Подсчет времени
+        long dayTime = server.getWorld(World.OVERWORLD).getLunarTime() % 24000L;
+        String time = dayTime < 0 ? "" : dayTime < 6000 ? config.getMorning() : dayTime < 12000 ?
+                config.getDay() : dayTime < 16500 ? config.getEvening() : config.getNight();
+
+        // Добавление типа времени, если время > 0
+        if (time.length() != 0) {
+            int countEnable = config.getLineCount() - Utils.clearFormatCodes(config.getLine1()).length() -
+                    Utils.clearFormatCodes(time).length();
+            descreption = countEnable <= 0 ? Utils.fixFormatCodes(config.getLine1()) :
+                    Utils.fixFormatCodes(config.getLine1() + " ".repeat(countEnable) + time);
         }
-        if (dayTime < 6000 && dayTime > 0) {
-            time = INSTANCE.config.getMorning();
-        } else if (dayTime < 12000 && dayTime > 6000) {
-            time = INSTANCE.config.getDay();
-        } else if (dayTime < 16500 && dayTime > 12000) {
-            time = INSTANCE.config.getEvening();
-        } else if (dayTime < 24000 && dayTime > 16500) {
-            time = INSTANCE.config.getNight();
-        }
-        String descreption = Utils.fixFormatCodes(INSTANCE.config.getLine1());
-        if(time.length() != 0){
-            String line1Time = "";
-            int countEnable = INSTANCE.config.getLineCount() - Utils.clearFormatCodes(INSTANCE.config.getLine1()).length() - Utils.clearFormatCodes(time).length();
-            if(countEnable <= 0){
-                descreption = Utils.fixFormatCodes(INSTANCE.config.getLine1());
-            } else {
-                line1Time += INSTANCE.config.getLine1();
-                for (int i = 0; i < countEnable; i++) {
-                    line1Time += " ";
-                }
-                line1Time += time;
-                descreption = Utils.fixFormatCodes(line1Time);
-            }
-        }
-        if(INSTANCE.config.getUseRandomLine2()){
-            if(INSTANCE.config.getRandomLine2().length() == 0) descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getLine2());
-            else {
-                double random = Math.floor(Math.random() * INSTANCE.config.getRandomLine2().length());
-                descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getRandomLine2().getString((int)random));
-            }
-        } else descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getLine2());
-//        Main.log.info(descreption);
+
+        // В случае, если НЕ рандомная строка на 2 линии, происходит добавление 2 строки. Иначе: выбор рандомной строки.
+        double random = Math.floor(Math.random() * config.getRandomLine2().length());
+        descreption += !config.getUseRandomLine2() ? "\n" + Utils.fixFormatCodes(config.getLine2()) :
+                config.getRandomLine2().length() == 0 ? "\n" + Utils.fixFormatCodes(config.getLine2()) :
+                        "\n" + Utils.fixFormatCodes(config.getRandomLine2().getString((int) random));
+
         server.setMotd(descreption);
     }
 }
