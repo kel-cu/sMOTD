@@ -1,4 +1,5 @@
 package og.kel.motd.mixin;
+
 import net.minecraft.network.packet.s2c.query.QueryResponseS2CPacket;
 import net.minecraft.server.ServerMetadata;
 import net.minecraft.server.network.ServerQueryNetworkHandler;
