@@ -41,7 +41,7 @@ public class Main implements ModInitializer {
     }
     public static void setMetaData(){
         String time = "";
-        ServerMetadata metadata = server.getServerMetadata();
+//        ServerMetadata metadata = server.getServerMetadata();
         long worldTime = server.getWorld(World.OVERWORLD).getLunarTime();
         long worldDays;
         long daysPerTick;
@@ -84,7 +84,7 @@ public class Main implements ModInitializer {
                 descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getRandomLine2().getString((int)random));
             }
         } else descreption+="\n"+Utils.fixFormatCodes(INSTANCE.config.getLine2());
-        Main.log.info(descreption);
-        metadata.setDescription(MutableText.of(new LiteralTextContent(descreption)));
+//        Main.log.info(descreption);
+        server.setMotd(descreption);
     }
 }

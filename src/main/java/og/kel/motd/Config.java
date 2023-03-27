@@ -11,23 +11,24 @@ import java.nio.file.Path;
 
 public class Config {
     @Getter
-    private String line1;
+    private String line1 = "A Minecraft Server";
     @Getter
-    private String line2;
+    private String line2 = "Minecraft " + SharedConstants.getGameVersion().getName();
     @Getter
-    private String day;
+    private String day = "Day";
     @Getter
-    private String night;
+    private String night = "Night";
     @Getter
-    private String morning;
+    private String morning = "Morning";
     @Getter
-    private String evening;
+    private String evening = "Evening";
     @Getter
-    private int lineCount;
+    private int lineCount = 58;
     @Getter
-    private Boolean useRandomLine2;
+    private Boolean useRandomLine2 = false;
     @Getter
-    private JSONArray randomLine2;
+    private JSONArray randomLine2 = new JSONArray().put("Hello, world!").put("Hi!");
+
     final Path configFile = Main.INSTANCE.server.getRunDirectory().toPath().resolve("config/smotd.json");
     public Config(){
         //final Path configFile = mc.runDirectory.toPath().resolve("SimplyStatus/servers/"+ serverAddress +".json");
@@ -38,15 +39,15 @@ public class Config {
         } else {
             try{
                 JSONObject json = new JSONObject(Files.readString(configFile, StandardCharsets.UTF_8));
-                line1 = json.has("line1") ? json.getString("line1") : "A Minecraft Server";
-                line2 = json.has("line2") ? json.getString("line2") : "Minecraft " + SharedConstants.getGameVersion().getName();
-                day = json.has("day") ? json.getString("day") : "Day";
-                night = json.has("night") ? json.getString("night") : "Night";
-                morning = json.has("morning") ? json.getString("morning") : "Morning";
-                evening = json.has("evening") ? json.getString("evening") : "Evening";
-                lineCount = json.has("countLine") ? json.getInt("countLine") : 58;
-                useRandomLine2 = json.has("useRandomLine2") ? json.getBoolean("useRandomLine2") : false;
-                randomLine2 = json.has("randomLine2") ? json.getJSONArray("randomLine2") : new JSONArray().put("Hello, world!").put("Hi!");
+                if (json.has("line1")) {line1 = json.getString("line1");}
+                if (json.has("line2")) {line2 = json.getString("line2");}
+                if (json.has("day")) {day = json.getString("day");}
+                if (json.has("night")) {night = json.getString("night");}
+                if (json.has("morning")) {morning = json.getString("morning");}
+                if (json.has("evening")) {evening = json.getString("evening");}
+                if (json.has("countLine")) {lineCount = json.getInt("countLine");}
+                if (json.has("useRandomLine2")) {useRandomLine2 = json.getBoolean("useRandomLine2");}
+                if (json.has("randomLine2")) {randomLine2 = json.getJSONArray("randomLine2");}
             } catch (Exception e){
                 e.printStackTrace();
             }
