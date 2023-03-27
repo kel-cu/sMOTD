@@ -34,7 +34,7 @@ public class Main implements ModInitializer {
         // Инициализация описания
         String descreption = Utils.fixFormatCodes(config.getLine1());
 
-        // Подсчет времени
+        // Подсчет времени. Если мир - null, ставит -1
         ServerWorld world = server.getWorld(World.OVERWORLD);
         long dayTime = world != null ? world.getLunarTime() % 24000L : -1;
 
