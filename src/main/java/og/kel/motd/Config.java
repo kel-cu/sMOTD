@@ -10,6 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Config {
+
+    // Чтобы можно было менять в 1 месте и не вспоминать где нужно изменить.
+    private final int defaultLineCount = 58;
+    private final Path configFile = Main.getServer().getRunDirectory().toPath().resolve("config/smotd.json");
     @Getter
     private String line1 = "A Minecraft Server";
     @Getter
@@ -23,37 +27,42 @@ public class Config {
     @Getter
     private String evening = "Evening";
     @Getter
-    private int lineCount = 58;
+    private int lineCount = defaultLineCount;
     @Getter
     private Boolean useRandomLine2 = false;
     @Getter
     private JSONArray randomLine2 = new JSONArray().put("Hello, world!").put("Hi!");
 
-    final Path configFile = Main.INSTANCE.server.getRunDirectory().toPath().resolve("config/smotd.json");
-    public Config(){
-        //final Path configFile = mc.runDirectory.toPath().resolve("SimplyStatus/servers/"+ serverAddress +".json");
-        if(!configFile.toFile().exists()){
+    public Config() {
+        if (!configFile.toFile().exists()) {
             save();
-            Main.log.info(Main.prefix+"Please reload server for load my config");
-            Main.server.exit();
+            Main.getLog().info(Main.prefix + "Please reload server for load my config");
+            Main.getServer().exit();
         } else {
-            try{
+            try {
                 JSONObject json = new JSONObject(Files.readString(configFile, StandardCharsets.UTF_8));
-                if (json.has("line1")) {line1 = json.getString("line1");}
-                if (json.has("line2")) {line2 = json.getString("line2");}
-                if (json.has("day")) {day = json.getString("day");}
-                if (json.has("night")) {night = json.getString("night");}
-                if (json.has("morning")) {morning = json.getString("morning");}
-                if (json.has("evening")) {evening = json.getString("evening");}
-                if (json.has("countLine")) {lineCount = json.getInt("countLine");}
-                if (json.has("useRandomLine2")) {useRandomLine2 = json.getBoolean("useRandomLine2");}
-                if (json.has("randomLine2")) {randomLine2 = json.getJSONArray("randomLine2");}
-            } catch (Exception e){
+                for (String key : json.keySet()) {
+                    switch (key) {
+                        case "line1" -> line1 = json.getString(key);
+                        case "line2" -> line2 = json.getString(key);
+                        case "day" -> day = json.getString(key);
+                        case "night" -> night = json.getString(key);
+                        case "morning" -> morning = json.getString(key);
+                        case "evening" -> evening = json.getString(key);
+                        case "countLine" -> lineCount = json.getInt(key);
+                        case "useRandomLine2" -> useRandomLine2 = json.getBoolean(key);
+                        case "randomLine2" -> randomLine2 = json.getJSONArray(key);
+                        default -> {
+                        }
+                    }
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-    private void save(){
+
+    private void save() {
         JSONObject json = new JSONObject();
         json.put("line1", "A Minecraft Server")
                 .put("line2", "Minecraft " + SharedConstants.getGameVersion().getName())
@@ -61,7 +70,7 @@ public class Config {
                 .put("night", "Night")
                 .put("morning", "Morning")
                 .put("evening", "Evening")
-                .put("countLine", 55)
+                .put("countLine", defaultLineCount)
                 .put("useRandomLine2", false)
                 .put("randomLine2", new JSONArray().put("Hello, world!").put("Hi!"));
         try {
