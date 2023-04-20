@@ -2,20 +2,23 @@
   "schemaVersion": 1,
   "id": "smotd",
   "version": "${version}",
-  "name": "Simply MOTD",
-  "description": "Mod MOTD for my local server",
+  "name": "sMOTD",
+  "description": "Fabric mod to change MOTD with the time of day on the server",
   "authors": [
     "Im_Kel"
   ],
   "contributors": [
     "Statux1a"
   ],
-  "contact": {},
+  "contact": {
+    "sources": "https://github.com/OpinionLoop/sMOTD",
+    "issues": "https://github.com/OpinionLoop/sMOTD/issues"
+  },
   "license": "MIT",
   "environment": "server",
   "entrypoints": {
     "main": [
-      "og.kel.motd.Main"
+      "org.opinionloop.motd.Main"
     ]
   },
   "mixins": [
