@@ -5,7 +5,10 @@
   "name": "Simply MOTD",
   "description": "Mod MOTD for my local server",
   "authors": [
-    "Simply_Kel"
+    "Im_Kel"
+  ],
+  "contributors": [
+    "Statux1a"
   ],
   "contact": {},
   "license": "MIT",

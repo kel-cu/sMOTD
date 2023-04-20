@@ -2,6 +2,7 @@ package og.kel.motd;
 
 import lombok.Getter;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -24,7 +25,7 @@ public class Main implements ModInitializer {
     }
 
     private void start(MinecraftServer minecraftServer) {
-        log.info("sMOTD started");
+        log.info(prefix + "sMOTD started");
         server = minecraftServer;
         config = new Config();
         setMetaData();
